@@ -7,10 +7,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -22,6 +18,8 @@ public class SideMenu extends VBox {
   public SideMenu(Controller controller) {
     this.controller = controller;
 
+    setMaxWidth(170);
+    setMaxHeight(Double.MAX_VALUE);
     setSpacing(40);
     setBackground(new Background(new BackgroundFill(Color.rgb(144, 65, 193), CornerRadii.EMPTY, Insets.EMPTY)));
     setPadding(new Insets(20, 20, 20, 20));
@@ -36,18 +34,31 @@ public class SideMenu extends VBox {
     //buttons.setFillWidth(true);
     buttons.setSpacing(20);
     Button welcome = sideButton("Welcome");
-    welcome.setOnMouseClicked(ev -> {
-      welcome.setStyle("-fx-background-color: #b84df8");
-      
+      welcome.setOnMouseClicked(ev -> {
+      controller.showWelcomeScreen();
     });
 
-
     Button astrology = sideButton("Astrology");
-    Button swift = sideButton("Swift");
-    Button weather = sideButton("Weather");
-    Button pigeon = sideButton("Pigeon"); // Joke one, was there a pigeon being loud outside my window
-    buttons.getChildren().addAll(welcome, astrology, swift, weather, pigeon);
+    astrology.setOnMouseClicked(ev -> {
+      controller.showAstrologyScreen();
+    });
 
+    Button swift = sideButton("Swift");
+      swift.setOnMouseClicked(ev -> {
+      controller.showSwiftScreen();
+    });
+
+    Button weather = sideButton("Weather");
+      weather.setOnMouseClicked(ev -> {
+      controller.showWeatherScreen();
+    });
+
+    Button pigeon = sideButton("Pigeon"); // Joke one, was there a pigeon being loud outside my window
+      pigeon.setOnMouseClicked(ev -> {
+      controller.showPigeonScreen();
+    });
+    
+    buttons.getChildren().addAll(welcome, astrology, swift, weather, pigeon);
     getChildren().addAll(logo, buttons);
   }
 
