@@ -1,18 +1,12 @@
 # Define the ticker list
-import pandas as pd
-tickers_list = ['AMD']
-
-# Fetch the data
+import sys
+#import pandas as pd
 import yfinance as yf
-data = yf.download(tickers_list,'2019-3-22')['Adj Close']
-
-# Print first 5 rows of the data
-print(data)
-
-# Import the plotting library
 import matplotlib.pyplot as plt
 
-# Plot the close price of the AAPL
-#data['Adj Close'].plot()
+stock = sys.argv[1]
+data = yf.download(stock,"2019-3-22")["Adj Close"]
+print(data)
 plt.plot(data)
-plt.show()
+#plt.show()
+plt.savefig("astockagy/src/main/resources/images/" + stock + ".png")
