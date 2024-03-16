@@ -2,9 +2,20 @@ package program.ui;
 
 import java.io.IOException;
 import javafx.concurrent.Task;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import program.controller.Controller;
 import java.nio.file.*;
 
@@ -12,6 +23,27 @@ public class AstrologyScreen extends StackPane {
 
   public AstrologyScreen(Controller controller) {
     controller.createStockGraph();
+
+    VBox display = new VBox();
+
+    HBox inputs = new HBox();
+    TextField ticker = new TextField();
+    ticker.setPromptText("Input stock ticker");
+    ComboBox<String> event = new ComboBox<>();
+    event.setPromptText("Select celestial event");
+    Button submit = new Button("Submit");
+    inputs.getChildren().addAll(ticker,event,submit);
+
+    display.getChildren().add(inputs);
+    getChildren().add(display);
+
+    HBox chartAndData = new HBox();
+    VBox data = new VBox();
+    data.setSpacing(10);
+    data.getChildren().addAll(new Button("Testtttttt"), new Button());
+    data.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
+
+    display.getChildren().add(chartAndData);
 
     // TODO: Implement screen switching listener and cancel event if triggered
     //https://stackoverflow.com/questions/44398611/running-a-process-in-a-separate-thread-so-rest-of-java-fx-application-is-usable
@@ -25,7 +57,8 @@ public class AstrologyScreen extends StackPane {
 
     executeAppTask.setOnSucceeded(e -> {
       ImageView chart = new ImageView(new Image(this.getClass().getResource("/images/AMD.png").toExternalForm())); // TODO: Change from fixed value
-      getChildren().add(chart); 
+      chartAndData.getChildren().add(chart); 
+      chartAndData.getChildren().add(data);
     });
 
     executeAppTask.setOnFailed(e -> {
