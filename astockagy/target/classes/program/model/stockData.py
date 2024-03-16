@@ -4,7 +4,7 @@ import sys
 import yfinance as yf
 import matplotlib.pyplot as plt
 
-print("Called")
+#print("Called")
 stock = sys.argv[1]
 data = yf.download(stock,"2019-3-22")["Adj Close"]
 print(data)
