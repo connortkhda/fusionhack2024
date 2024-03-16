@@ -10,4 +10,4 @@ data = yf.download(stock,"2019-3-22")["Adj Close"]
 print(data)
 plt.plot(data)
 #plt.show()
-#plt.savefig("src/main/resources/images/" + stock + ".png")
+plt.savefig("src/main/resources/images/" + stock + ".png")

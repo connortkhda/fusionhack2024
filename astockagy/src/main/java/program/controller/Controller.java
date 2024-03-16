@@ -47,10 +47,11 @@ public class Controller {
   public void createStockGraph() {
 
     //System.setProperty("user.dir", "D:/FusionHack 2024/fusionhack2024/astockagy/src/main/java/program/model");
-    System.out.println("Test");
+    // System.out.println("Test");
     try {
       @SuppressWarnings("deprecation")
       Process runtime = Runtime.getRuntime().exec("python src\\main\\java\\program\\model\\stockData.py AMD");
+      System.out.println("exe");
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -66,7 +67,6 @@ public class Controller {
     // }
     // System.out.println(System.getProperty("user.dir"));
     //launchCommand();
-
 
   }
 
@@ -104,12 +104,12 @@ public void launchCommand() {
       // this is executed on the FX Application Thread, 
       // so it is safe to update the UI here if you need
       System.out.println(commandTask.getValue());
-      commandTask.cancel();
+      exec.shutdown();
       
   });
   commandTask.setOnFailed(event -> {
       commandTask.getException().printStackTrace();
-      commandTask.cancel();
+      exec.shutdown();
   });
   exec.execute(commandTask);
 
