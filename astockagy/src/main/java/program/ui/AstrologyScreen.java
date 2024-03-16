@@ -18,6 +18,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import program.controller.Controller;
 import java.nio.file.*;
+import java.util.Map;
 
 public class AstrologyScreen extends StackPane {
 
@@ -57,6 +58,12 @@ public class AstrologyScreen extends StackPane {
 
     executeAppTask.setOnSucceeded(e -> {
       ImageView chart = new ImageView(new Image(this.getClass().getResource("/images/AMD.png").toExternalForm())); // TODO: Change from fixed value
+
+      // for (Map.Entry<String, Float> entry : controller.getStockData().entrySet()) { 
+      //   System.out.println(entry.getKey() + " : "+ entry.getValue()); 
+      // }
+
+      //controller.getStockData();
       chartAndData.getChildren().add(chart); 
       chartAndData.getChildren().add(data);
     });
