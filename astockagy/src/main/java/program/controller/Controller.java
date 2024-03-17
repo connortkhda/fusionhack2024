@@ -82,7 +82,7 @@ public class Controller {
     Map<Date, Float> map = new HashMap<Date, Float>();
     for (Map.Entry<String, Float> entry : getStockData().entrySet()) { 
       map.put(parseDate(entry.getKey()), entry.getValue());
-      System.out.println(entry.getKey() + " : "+ entry.getValue()); 
+      //System.out.println(entry.getKey() + " : "+ entry.getValue()); 
     }
     return map;
   }
@@ -94,5 +94,13 @@ public class Controller {
     } catch (ParseException e) {  
       return null;
     }
+  }
+
+  public static Date getLatest() {
+    Calendar latest = Calendar.getInstance();
+    latest.add(Calendar.MONTH, 1);
+    latest.add(Calendar.DAY_OF_MONTH, -4);
+
+    return parseDate(latest.get(Calendar.YEAR) + "-" + latest.get(Calendar.MONTH) + "-" + latest.get(Calendar.DAY_OF_MONTH));
   }
 }

@@ -20,9 +20,19 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import program.controller.Controller;
 import java.nio.file.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Calendar;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 public class AstrologyScreen extends StackPane {
+  final Date START_DATE = Controller.parseDate("2019-03-22");
+  final Date END_DATE = Controller.getLatest();
 
   public AstrologyScreen(Controller controller) {
     controller.createStockGraph();
@@ -43,7 +53,7 @@ public class AstrologyScreen extends StackPane {
     HBox chartAndData = new HBox();
 
     VBox data = new VBox();
-    data.setAlignment(Pos.CENTER);
+    data.setAlignment(Pos.TOP_CENTER);
     data.setSpacing(10);
     Label information = new Label("Information");
     ComboBox<String> eventDate = new ComboBox<>();
@@ -55,7 +65,6 @@ public class AstrologyScreen extends StackPane {
     Label priceAtEvent = new Label("Price at event: ");
     Label priceAfterHolding = new Label("Price after holding: ");
     Label increaseAfterHolding = new Label("$.. ..%");
-
 
     data.getChildren().addAll(information, eventDate, holdPeriod, priceAtStart, priceAtEnd, increaseAtEnd, priceAtEvent, priceAfterHolding, increaseAfterHolding);
     data.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
@@ -81,10 +90,14 @@ public class AstrologyScreen extends StackPane {
 
       //Map<String, Float> stockData = controller.getStockData();
       //System.out.println(stockData.get("2022-08-02"));
-      controller.getStockDataDates();
-
+      Map<Date, Float> stockData = controller.getStockDataDates();
+      System.out.println(END_DATE.toString());
+      System.out.println(START_DATE.toString());
       chartAndData.getChildren().add(chart); 
       chartAndData.getChildren().add(data);
+
+      priceAtStart.setText(priceAtStart.getText() + stockData.get(START_DATE));
+      priceAtEnd.setText(priceAtEnd.getText() + stockData.get(END_DATE));
     });
 
     executeAppTask.setOnFailed(e -> {
@@ -131,5 +144,5 @@ public class AstrologyScreen extends StackPane {
     } catch (IOException | InterruptedException e) {
       e.printStackTrace();
     }
-  } 
+  }
 }
