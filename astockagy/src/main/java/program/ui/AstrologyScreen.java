@@ -2,8 +2,10 @@ package program.ui;
 
 import java.io.IOException;
 import javafx.concurrent.Task;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -39,9 +41,23 @@ public class AstrologyScreen extends StackPane {
     getChildren().add(display);
 
     HBox chartAndData = new HBox();
+
     VBox data = new VBox();
+    data.setAlignment(Pos.CENTER);
     data.setSpacing(10);
-    data.getChildren().addAll(new Button("Testtttttt"), new Button());
+    Label information = new Label("Information");
+    ComboBox<String> eventDate = new ComboBox<>();
+    TextField holdPeriod = new TextField();
+    holdPeriod.setPromptText("Holding period");
+    Label priceAtStart = new Label("Price at start of range: ");
+    Label priceAtEnd = new Label("Price at end of range: ");
+    Label increaseAtEnd = new Label("$.. ..%");
+    Label priceAtEvent = new Label("Price at event: ");
+    Label priceAfterHolding = new Label("Price after holding: ");
+    Label increaseAfterHolding = new Label("$.. ..%");
+
+
+    data.getChildren().addAll(information, eventDate, holdPeriod, priceAtStart, priceAtEnd, increaseAtEnd, priceAtEvent, priceAfterHolding, increaseAfterHolding);
     data.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
 
     display.getChildren().add(chartAndData);
