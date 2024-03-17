@@ -63,7 +63,10 @@ public class AstrologyScreen extends StackPane {
       //   System.out.println(entry.getKey() + " : "+ entry.getValue()); 
       // }
 
-      //controller.getStockData();
+      //Map<String, Float> stockData = controller.getStockData();
+      //System.out.println(stockData.get("2022-08-02"));
+      controller.getStockDataDates();
+
       chartAndData.getChildren().add(chart); 
       chartAndData.getChildren().add(data);
     });

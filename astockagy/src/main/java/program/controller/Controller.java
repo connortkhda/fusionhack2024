@@ -1,10 +1,10 @@
 package program.controller;
 
-import java.util.HashMap;
-import java.util.Map;
 import program.scene.MainScene;
 import java.io.*; 
-import java.util.*; 
+import java.util.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class Controller {
   private MainScene mainScene;
@@ -78,60 +78,20 @@ public class Controller {
     return map;  
   }
 
-  public Map<String, String> test() {
-    Map<String, String> mapFromFile = HashMapFromTextFile(); 
-  
-        // iterate over HashMap entries 
-    for (Map.Entry<String, String> entry : mapFromFile.entrySet()) { 
+  public Map<Date, Float> getStockDataDates() {
+    Map<Date, Float> map = new HashMap<Date, Float>();
+    for (Map.Entry<String, Float> entry : getStockData().entrySet()) { 
+      map.put(parseDate(entry.getKey()), entry.getValue());
       System.out.println(entry.getKey() + " : "+ entry.getValue()); 
     }
-    return mapFromFile; 
-  } 
-  
-    public static Map<String, String> HashMapFromTextFile() { 
-        Map<String, String> map 
-            = new HashMap<String, String>(); 
-        BufferedReader br = null; 
-  
-        try { 
-  
-            // create file object 
-            File file = new File("src/main/resources/data/AMDData.csv"); 
-  
-            // create BufferedReader object from the File 
-            br = new BufferedReader(new FileReader(file)); 
-  
-            String line = null; 
-  
-            // read file line by line 
-            while ((line = br.readLine()) != null) { 
-  
-              // split the line by : 
-              String[] parts = line.split(","); 
-  
-              // first part is name, second is number 
-              String name = parts[0].trim(); 
-              String number = parts[1].trim(); 
-  
-              // put name, number in HashMap if they are 
-              // not empty 
-              map.put(name, number); 
-            } 
-        } 
-        catch (Exception e) { 
-            e.printStackTrace(); 
-        } 
-        finally { 
-  
-            // Always close the BufferedReader 
-            if (br != null) { 
-                try { 
-                    br.close(); 
-                } 
-                catch (Exception e) { 
-                }; 
-            } 
-        } 
-    return map;  
+    return map;
+  }
+
+  public static Date parseDate(String date) {
+    try {
+      return new SimpleDateFormat("yyyy-MM-dd").parse(date);
+    } catch (ParseException e) {  
+      return null;
+    }
   }
 }
