@@ -52,9 +52,9 @@ public class Controller {
       String line = br.readLine(); //Gets rid of first line
       while ((line = br.readLine()) != null) { 
         String[] parts = line.split(","); 
-        String name = parts[0].trim(); 
-        Float number = Float.parseFloat(parts[1].trim()); 
-        map.put(name, number); 
+        String date = parts[0].trim(); 
+        Float value = Float.parseFloat(parts[1].trim()); 
+        map.put(date, value); 
       } 
     } catch (Exception e) { 
       e.printStackTrace(); 

@@ -2,6 +2,7 @@ package program.ui;
 
 import java.io.IOException;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -12,10 +13,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -50,6 +47,8 @@ public class AstrologyScreen extends StackPane {
     event.setStyle("-fx-background-color: #c280ea");
     event.setPromptText("Select celestial event");
     event.getItems().add("Mercury in retrograde");
+    event.getItems().add("Solar eclipse");
+    event.getItems().add("Lunar eclipse");
 
     Button submit = new Button("Submit");
     submit.setStyle("-fx-background-color: #c280ea");
@@ -107,6 +106,8 @@ public class AstrologyScreen extends StackPane {
       };
 
     executeAppTask.setOnSucceeded(e -> { //TODO: THIS PROBABLY ALL NEEDS TO BE IN A TRY CATCH BLOCK
+      chartOverlay.getChildren().clear();
+      chartAndData.getChildren().clear();
       //Line line = new Line(0, 0, 0, 400);
       //line.setStrokeWidth(1);
       //line.setTranslateX(-240); //PERFECT FOR EDGE
@@ -143,6 +144,14 @@ public class AstrologyScreen extends StackPane {
         increaseAtEnd.setTextFill(Color.RED);
       }
 
+      if (eventDate.getValue() != null) {
+        System.out.println("fired top");
+        eventDate.fireEvent(new ActionEvent());
+      } else {
+        eventDate.getSelectionModel().select(1); //0 causes errors most of the time
+        System.out.println("Fired bottom");
+        eventDate.fireEvent(new ActionEvent());
+      }
     });
 
     executeAppTask.setOnFailed(e -> {
@@ -190,8 +199,8 @@ public class AstrologyScreen extends StackPane {
         Date dateOfEvent = Controller.getClosestMarketDayPrior(eventDate.getValue(), stockData);
 
 
-        priceAtEvent.setText("Price at event: " + stockData.get(dayBeforeDate));
-        priceEODEvent.setText("Price at EOD of event: " + stockData.get(dateOfEvent));
+        priceAtEvent.setText("Price at event: " + Double.valueOf(twoDP.format(stockData.get(dayBeforeDate))));
+        priceEODEvent.setText("Price at EOD of event: " + Double.valueOf(twoDP.format(stockData.get(dateOfEvent))));
 
         Float profitEOD = stockData.get(dateOfEvent) - stockData.get(dayBeforeDate);
         increaseEODEvent.setText("$" + Double.valueOf(twoDP.format(profitEOD))+ " " + Double.valueOf(twoDP.format((profitEOD)/stockData.get(dayBeforeDate)*100)) + "%");
@@ -210,7 +219,7 @@ public class AstrologyScreen extends StackPane {
         Date dateHolding = Controller.getClosestMarketDayPrior((dateAfterHolding.get(Calendar.YEAR) + "-" + dateAfterHolding.get(Calendar.MONTH) + "-" + dateAfterHolding.get(Calendar.DAY_OF_MONTH)), stockData);
 
         
-        priceAfterHolding.setText("Price after holding: " + (stockData.get(dateHolding)));
+        priceAfterHolding.setText("Price after holding: " + Double.valueOf(twoDP.format((stockData.get(dateHolding)))));
 
         Float profitHolding = (stockData.get(dateHolding) - stockData.get(dayBeforeDate));
         increaseAfterHolding.setText("$" + Double.valueOf(twoDP.format(profitHolding)) + " " + Double.valueOf(twoDP.format(profitHolding/stockData.get(dayBeforeDate)*100)) + "%");
@@ -219,6 +228,8 @@ public class AstrologyScreen extends StackPane {
         } else {
           increaseAfterHolding.setTextFill(Color.RED);
         }
+      } else {
+        System.out.println("Error - Null event date selected");
       }
     });
 
