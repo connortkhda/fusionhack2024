@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 #print("Called")
 stock = sys.argv[1]
-data = yf.download(stock,"2019-3-22")["Adj Close"]
+data = yf.download(stock,"2019-3-17")["Adj Close"]
 
 #print(data)
 

@@ -104,6 +104,14 @@ public class Controller {
     return parseDate(latest.get(Calendar.YEAR) + "-" + latest.get(Calendar.MONTH) + "-" + latest.get(Calendar.DAY_OF_MONTH));
   }
 
+  public static String getLatestString() {
+    Calendar latest = Calendar.getInstance();
+    latest.add(Calendar.MONTH, 1);
+    latest.add(Calendar.DAY_OF_MONTH, -4);
+
+    return (latest.get(Calendar.YEAR) + "-" + latest.get(Calendar.MONTH) + "-" + latest.get(Calendar.DAY_OF_MONTH));
+  }
+
   public static Date[] getMercuryRetrogradeDates() {
     Date[] dates = {parseDate("2019-03-05"),parseDate("2019-07-07"),parseDate("2019-10-31"),parseDate("2020-02-16"),parseDate("2020-06-17"),
     parseDate("2020-10-13"),parseDate("2021-01-30"),parseDate("2021-05-29"),parseDate("2021-09-27"),parseDate("2022-01-14"),parseDate("2022-05-10"),

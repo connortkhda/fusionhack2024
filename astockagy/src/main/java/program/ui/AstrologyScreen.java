@@ -24,13 +24,16 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class AstrologyScreen extends StackPane {
-  final Date START_DATE = Controller.parseDate("2019-03-22");
+  final Date START_DATE = Controller.parseDate("2019-03-17");
   final Date END_DATE = Controller.getLatest();
   Map<Date, Float> stockData;
 
   public AstrologyScreen(Controller controller) {
+    System.out.println(daysBetween());
+
     VBox display = new VBox();
 
     HBox inputs = new HBox();
@@ -158,8 +161,6 @@ public class AstrologyScreen extends StackPane {
         increaseAfterHolding.setText("$" + Double.valueOf(twoDP.format((stockData.get(dateHolding) - stockData.get(dayBeforeDate)))) + " " + Double.valueOf(twoDP.format((stockData.get(dateHolding) - stockData.get(dayBeforeDate))/stockData.get(dayBeforeDate)*100)) + "%");
       }
     });
-
-
   }
 
   private void displayGraph() {
@@ -194,5 +195,11 @@ public class AstrologyScreen extends StackPane {
     } catch (IOException | InterruptedException e) {
       e.printStackTrace();
     }
+  }
+
+  private int daysBetween() {
+    long diff = END_DATE.getTime() - START_DATE.getTime();
+    return (int)TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+
   }
 }
