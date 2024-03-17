@@ -96,6 +96,8 @@ public class AstrologyScreen extends StackPane {
     // TODO: Implement screen switching listener and cancel event if triggered
     //https://stackoverflow.com/questions/44398611/running-a-process-in-a-separate-thread-so-rest-of-java-fx-application-is-usable
     submit.setOnMouseClicked(ev -> { 
+      Label loading = new Label("Loading...");
+      getChildren().add(loading);
       controller.createStockGraph(ticker.getText()); 
       Task<Void> executeAppTask = new Task<Void>() {
         @Override
@@ -106,6 +108,7 @@ public class AstrologyScreen extends StackPane {
       };
 
     executeAppTask.setOnSucceeded(e -> { //TODO: THIS PROBABLY ALL NEEDS TO BE IN A TRY CATCH BLOCK
+      getChildren().remove(loading);
       chartOverlay.getChildren().clear();
       chartAndData.getChildren().clear();
       //Line line = new Line(0, 0, 0, 400);
@@ -175,7 +178,7 @@ public class AstrologyScreen extends StackPane {
     });
 
 
-    event.setOnAction(ev -> {
+    event.setOnAction(ev -> { //TODO - Change this to react to appropriate events
       if (event.getValue() != null) {
         eventDate.getItems().clear();
         eventDate.getItems().addAll(Controller.getMercuryRetrogradeStrings());
