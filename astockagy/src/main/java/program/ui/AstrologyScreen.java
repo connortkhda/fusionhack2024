@@ -2,6 +2,7 @@ package program.ui;
 
 import java.io.IOException;
 import javafx.concurrent.Task;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -9,12 +10,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -31,21 +35,29 @@ public class AstrologyScreen extends StackPane {
   final Date START_DATE = Controller.parseDate("2019-03-18");
   final Date END_DATE = Controller.getLatest();
   Map<Date, Float> stockData;
+  boolean eventsShown = false;
 
   public AstrologyScreen(Controller controller) {
-    System.out.println(daysBetween(START_DATE, END_DATE));
+    //System.out.println(daysBetween(START_DATE, END_DATE));
 
     VBox display = new VBox();
 
     HBox inputs = new HBox();
     TextField ticker = new TextField();
     ticker.setPromptText("Input stock ticker");
+
     ComboBox<String> event = new ComboBox<>();
+    event.setStyle("-fx-background-color: #c280ea");
     event.setPromptText("Select celestial event");
     event.getItems().add("Mercury in retrograde");
+
     Button submit = new Button("Submit");
+    submit.setStyle("-fx-background-color: #c280ea");
 
     inputs.getChildren().addAll(ticker,event,submit);
+    inputs.setSpacing(20);
+    inputs.setPadding(new Insets(20,20,20,20));
+    inputs.setBackground(new Background(new BackgroundFill(Color.rgb(144, 65, 193), CornerRadii.EMPTY, Insets.EMPTY)));
 
     display.getChildren().add(inputs);
     getChildren().add(display);
@@ -53,8 +65,12 @@ public class AstrologyScreen extends StackPane {
     HBox chartAndData = new HBox();
 
     VBox data = new VBox();
+    data.setMaxWidth(200);
     data.setAlignment(Pos.TOP_CENTER);
     data.setSpacing(10);
+    data.setBackground(new Background(new BackgroundFill(Color.rgb(194, 128, 234), CornerRadii.EMPTY, Insets.EMPTY)));
+    HBox.setHgrow(data, Priority.ALWAYS);
+
     Label information = new Label("Information");
     ComboBox<String> eventDate = new ComboBox<>();
     eventDate.setPromptText("Select Event Date");
@@ -69,24 +85,26 @@ public class AstrologyScreen extends StackPane {
     Label increaseEODEvent = new Label("$.. ..%");
     Label priceAfterHolding = new Label("Price after holding: ");
     Label increaseAfterHolding = new Label("$.. ..%");
+    Button showEventsButton = new Button("Show/Hide Events");
 
-    data.getChildren().addAll(information, eventDate, holdPeriod, priceAtStart, priceAtEnd, increaseAtEnd, priceAtEvent, priceEODEvent, increaseEODEvent, priceAfterHolding, increaseAfterHolding);
-    data.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
+    data.getChildren().addAll(information, eventDate, holdPeriod, priceAtStart, priceAtEnd, increaseAtEnd, priceAtEvent, priceEODEvent, increaseEODEvent, priceAfterHolding, increaseAfterHolding, showEventsButton);
+    //data.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
 
     display.getChildren().add(chartAndData);
     StackPane chartOverlay = new StackPane();
+
 
     // TODO: Implement screen switching listener and cancel event if triggered
     //https://stackoverflow.com/questions/44398611/running-a-process-in-a-separate-thread-so-rest-of-java-fx-application-is-usable
     submit.setOnMouseClicked(ev -> { 
       controller.createStockGraph(ticker.getText()); 
-    Task<Void> executeAppTask = new Task<Void>() {
-      @Override
-      protected Void call() throws Exception {
-        displayGraph();
-        return null;
-      }
-    };
+      Task<Void> executeAppTask = new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+          displayGraph();
+          return null;
+        }
+      };
 
     executeAppTask.setOnSucceeded(e -> { //TODO: THIS PROBABLY ALL NEEDS TO BE IN A TRY CATCH BLOCK
       //Line line = new Line(0, 0, 0, 400);
@@ -100,9 +118,6 @@ public class AstrologyScreen extends StackPane {
       ImageView chart = new ImageView(new Image(this.getClass().getResource("/images/"+ ticker.getText() + ".png").toExternalForm())); 
       chartOverlay.getChildren().addAll(chart);
 
-      for (String eventString : eventDate.getItems()) {
-        chartOverlay.getChildren().add(eventLine(Controller.parseDate(eventString)));
-      }
       // for (Map.Entry<String, Float> entry : controller.getStockData().entrySet()) { 
       //   System.out.println(entry.getKey() + " : "+ entry.getValue()); 
       // }
@@ -118,8 +133,15 @@ public class AstrologyScreen extends StackPane {
       priceAtStart.setText("Price at start of range: " + stockData.get(START_DATE));
       priceAtEnd.setText("Price at end of range: " + stockData.get(END_DATE));
 
+      Float profit = (stockData.get(END_DATE) - stockData.get(START_DATE));
+
       DecimalFormat twoDP = new DecimalFormat("#.##");
-      increaseAtEnd.setText("$" + (stockData.get(END_DATE) - stockData.get(START_DATE)) + " " + Double.valueOf(twoDP.format((stockData.get(END_DATE) - stockData.get(START_DATE))/stockData.get(START_DATE)*100)) + "%");
+      increaseAtEnd.setText("$" + profit + " " + Double.valueOf(twoDP.format(profit/stockData.get(START_DATE)*100)) + "%");
+      if (profit > 0) {
+        increaseAtEnd.setTextFill(Color.GREEN);
+      } else {
+        increaseAtEnd.setTextFill(Color.RED);
+      }
 
     });
 
@@ -134,6 +156,15 @@ public class AstrologyScreen extends StackPane {
     Thread thread = new Thread(executeAppTask);
     thread.start();
     });
+
+    submit.setOnMouseEntered(ev -> {
+      submit.setStyle("-fx-background-color: #b84df8");
+    });
+
+    submit.setOnMouseExited(ev -> {
+      submit.setStyle("-fx-background-color: #c280ea");
+    });
+
 
     event.setOnAction(ev -> {
       if (event.getValue() != null) {
@@ -161,7 +192,14 @@ public class AstrologyScreen extends StackPane {
 
         priceAtEvent.setText("Price at event: " + stockData.get(dayBeforeDate));
         priceEODEvent.setText("Price at EOD of event: " + stockData.get(dateOfEvent));
-        increaseEODEvent.setText("$" + Double.valueOf(twoDP.format(stockData.get(dateOfEvent) - stockData.get(dayBeforeDate)) )+ " " + Double.valueOf(twoDP.format((stockData.get(dateOfEvent) - stockData.get(dayBeforeDate))/stockData.get(dayBeforeDate)*100)) + "%");
+
+        Float profitEOD = stockData.get(dateOfEvent) - stockData.get(dayBeforeDate);
+        increaseEODEvent.setText("$" + Double.valueOf(twoDP.format(profitEOD))+ " " + Double.valueOf(twoDP.format((profitEOD)/stockData.get(dayBeforeDate)*100)) + "%");
+        if (profitEOD > 0) {
+          increaseEODEvent.setTextFill(Color.GREEN);
+        } else {
+          increaseEODEvent.setTextFill(Color.RED);
+        }
 
         Calendar dateAfterHolding = Calendar.getInstance();
         dateAfterHolding.set(Calendar.YEAR, Integer.parseInt(yearMonthDay[0]));
@@ -171,13 +209,33 @@ public class AstrologyScreen extends StackPane {
         //Date dateHolding = Controller.parseDate(dateAfterHolding.get(Calendar.YEAR) + "-" + dateAfterHolding.get(Calendar.MONTH) + "-" + dateAfterHolding.get(Calendar.DAY_OF_MONTH));
         Date dateHolding = Controller.getClosestMarketDayPrior((dateAfterHolding.get(Calendar.YEAR) + "-" + dateAfterHolding.get(Calendar.MONTH) + "-" + dateAfterHolding.get(Calendar.DAY_OF_MONTH)), stockData);
 
-        priceAfterHolding.setText("Price after holding: " + (stockData.get(dateHolding)));
-        increaseAfterHolding.setText("$" + Double.valueOf(twoDP.format((stockData.get(dateHolding) - stockData.get(dayBeforeDate)))) + " " + Double.valueOf(twoDP.format((stockData.get(dateHolding) - stockData.get(dayBeforeDate))/stockData.get(dayBeforeDate)*100)) + "%");
-      
         
-      
+        priceAfterHolding.setText("Price after holding: " + (stockData.get(dateHolding)));
+
+        Float profitHolding = (stockData.get(dateHolding) - stockData.get(dayBeforeDate));
+        increaseAfterHolding.setText("$" + Double.valueOf(twoDP.format(profitHolding)) + " " + Double.valueOf(twoDP.format(profitHolding/stockData.get(dayBeforeDate)*100)) + "%");
+        if (profitHolding > 0) {
+          increaseAfterHolding.setTextFill(Color.GREEN);
+        } else {
+          increaseAfterHolding.setTextFill(Color.RED);
+        }
       }
     });
+
+    showEventsButton.setOnMouseClicked(ev -> {
+      if (!eventsShown) {
+        for (String eventString : eventDate.getItems()) {
+          chartOverlay.getChildren().add(eventLine(Controller.parseDate(eventString)));
+        }
+        eventsShown = true;
+      } else {
+        chartOverlay.getChildren().clear();
+        ImageView chart = new ImageView(new Image(this.getClass().getResource("/images/"+ ticker.getText() + ".png").toExternalForm())); 
+        chartOverlay.getChildren().addAll(chart);
+        eventsShown = false;
+      }
+    });
+
   }
 
   private void displayGraph() {
@@ -225,9 +283,9 @@ public class AstrologyScreen extends StackPane {
 
     float fraction = (float)daysFromStart/(float)totalDays;
 
-    System.out.println("total: " + totalDays + " days from start: " + daysFromStart + " fraction: " + fraction + " moving by: " + -220+fraction*440);
+    //System.out.println("total: " + totalDays + " days from start: " + daysFromStart + " fraction: " + fraction + " moving by: " + -220+fraction*440);
 
-    Line line = new Line(0, 0, 0, 200);
+    Line line = new Line(0, 0, 0, 350);
     line.setStrokeWidth(1);
     line.setTranslateX(-220+fraction*455);
 
