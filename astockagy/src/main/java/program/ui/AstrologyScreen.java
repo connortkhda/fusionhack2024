@@ -134,11 +134,9 @@ public class AstrologyScreen extends StackPane {
       }
 
       if (eventDate.getValue() != null) {
-        System.out.println("fired top");
         eventDate.fireEvent(new ActionEvent());
       } else {
         eventDate.getSelectionModel().select(1); //0 causes errors most of the time
-        System.out.println("Fired bottom");
         eventDate.fireEvent(new ActionEvent());
       }
     });
@@ -236,7 +234,6 @@ public class AstrologyScreen extends StackPane {
     holdPeriod.setOnKeyPressed(ev -> {
       if (ev.getCode() == KeyCode.ENTER) {
         eventDate.fireEvent(new ActionEvent());
-        System.out.println("The \"Enter\" key was pressed");
       }
     });
   }
