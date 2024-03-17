@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import program.controller.Controller;
 import java.nio.file.*;
 import java.text.DecimalFormat;
@@ -27,12 +28,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class AstrologyScreen extends StackPane {
-  final Date START_DATE = Controller.parseDate("2019-03-17");
+  final Date START_DATE = Controller.parseDate("2019-03-18");
   final Date END_DATE = Controller.getLatest();
   Map<Date, Float> stockData;
 
   public AstrologyScreen(Controller controller) {
-    System.out.println(daysBetween());
+    System.out.println(daysBetween(START_DATE, END_DATE));
 
     VBox display = new VBox();
 
@@ -73,6 +74,7 @@ public class AstrologyScreen extends StackPane {
     data.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
 
     display.getChildren().add(chartAndData);
+    StackPane chartOverlay = new StackPane();
 
     // TODO: Implement screen switching listener and cancel event if triggered
     //https://stackoverflow.com/questions/44398611/running-a-process-in-a-separate-thread-so-rest-of-java-fx-application-is-usable
@@ -87,8 +89,20 @@ public class AstrologyScreen extends StackPane {
     };
 
     executeAppTask.setOnSucceeded(e -> { //TODO: THIS PROBABLY ALL NEEDS TO BE IN A TRY CATCH BLOCK
+      //Line line = new Line(0, 0, 0, 400);
+      //line.setStrokeWidth(1);
+      //line.setTranslateX(-240); //PERFECT FOR EDGE
+      //line.setTranslateX(-220); //Perfect start of data
+      //line.setTranslateX(235); //RHS DATA
+      //Line line = eventLine(Controller.parseDate("2020-01-01"));
+      //Line line2 = eventLine(Controller.parseDate("2022-01-01"));
+      //System.out.println(Controller.parseDate("2020-01-01").toString());
       ImageView chart = new ImageView(new Image(this.getClass().getResource("/images/"+ ticker.getText() + ".png").toExternalForm())); 
+      chartOverlay.getChildren().addAll(chart);
 
+      for (String eventString : eventDate.getItems()) {
+        chartOverlay.getChildren().add(eventLine(Controller.parseDate(eventString)));
+      }
       // for (Map.Entry<String, Float> entry : controller.getStockData().entrySet()) { 
       //   System.out.println(entry.getKey() + " : "+ entry.getValue()); 
       // }
@@ -98,7 +112,7 @@ public class AstrologyScreen extends StackPane {
       this.stockData = controller.getStockDataDates(ticker.getText());
       //System.out.println(END_DATE.toString());
       //System.out.println(START_DATE.toString());
-      chartAndData.getChildren().add(chart); 
+      chartAndData.getChildren().add(chartOverlay); 
       chartAndData.getChildren().add(data);
 
       priceAtStart.setText("Price at start of range: " + stockData.get(START_DATE));
@@ -159,6 +173,9 @@ public class AstrologyScreen extends StackPane {
 
         priceAfterHolding.setText("Price after holding: " + (stockData.get(dateHolding)));
         increaseAfterHolding.setText("$" + Double.valueOf(twoDP.format((stockData.get(dateHolding) - stockData.get(dayBeforeDate)))) + " " + Double.valueOf(twoDP.format((stockData.get(dateHolding) - stockData.get(dayBeforeDate))/stockData.get(dayBeforeDate)*100)) + "%");
+      
+        
+      
       }
     });
   }
@@ -197,9 +214,23 @@ public class AstrologyScreen extends StackPane {
     }
   }
 
-  private int daysBetween() {
-    long diff = END_DATE.getTime() - START_DATE.getTime();
-    return (int)TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+  private int daysBetween(Date from, Date to) {
+    long difference = to.getTime() - from.getTime();
+    return (int)TimeUnit.DAYS.convert(difference, TimeUnit.MILLISECONDS);
+  }
 
+  private Line eventLine(Date date) {
+    int totalDays = daysBetween(START_DATE, END_DATE);
+    int daysFromStart = daysBetween(START_DATE, date);
+
+    float fraction = (float)daysFromStart/(float)totalDays;
+
+    System.out.println("total: " + totalDays + " days from start: " + daysFromStart + " fraction: " + fraction + " moving by: " + -220+fraction*440);
+
+    Line line = new Line(0, 0, 0, 200);
+    line.setStrokeWidth(1);
+    line.setTranslateX(-220+fraction*455);
+
+    return line;
   }
 }
