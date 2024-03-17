@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -73,8 +74,9 @@ public class AstrologyScreen extends StackPane {
     Label information = new Label("Information");
     ComboBox<String> eventDate = new ComboBox<>();
     eventDate.setPromptText("Select Event Date");
+    Label holdPeriodLabel = new Label("Set holding period: ");
     TextField holdPeriod = new TextField();
-    holdPeriod.setPromptText("Holding period");
+    holdPeriod.setMaxWidth(50);
     holdPeriod.setText("0");
     Label priceAtStart = new Label("Price at start of range: ");
     Label priceAtEnd = new Label("Price at end of range: ");
@@ -86,7 +88,7 @@ public class AstrologyScreen extends StackPane {
     Label increaseAfterHolding = new Label("$.. ..%");
     Button showEventsButton = new Button("Show/Hide Events");
 
-    data.getChildren().addAll(information, eventDate, holdPeriod, priceAtStart, priceAtEnd, increaseAtEnd, priceAtEvent, priceEODEvent, increaseEODEvent, priceAfterHolding, increaseAfterHolding, showEventsButton);
+    data.getChildren().addAll(information, eventDate, holdPeriodLabel, holdPeriod, priceAtStart, priceAtEnd, increaseAtEnd, priceAtEvent, priceEODEvent, increaseEODEvent, priceAfterHolding, increaseAfterHolding, showEventsButton);
     //data.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
 
     display.getChildren().add(chartAndData);
@@ -250,6 +252,12 @@ public class AstrologyScreen extends StackPane {
       }
     });
 
+    holdPeriod.setOnKeyPressed(ev -> {
+      if (ev.getCode() == KeyCode.ENTER) {
+        eventDate.fireEvent(new ActionEvent());
+        System.out.println("The \"Enter\" key was pressed");
+      }
+    });
   }
 
   private void displayGraph() {
