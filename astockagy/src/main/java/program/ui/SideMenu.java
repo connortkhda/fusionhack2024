@@ -23,7 +23,6 @@ public class SideMenu extends VBox {
     setSpacing(40);
     setBackground(new Background(new BackgroundFill(Color.rgb(144, 65, 193), CornerRadii.EMPTY, Insets.EMPTY)));
     setPadding(new Insets(20, 20, 20, 20));
-    //setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
 
     ImageView logo = new ImageView(new Image(this.getClass().getResource("/images/logo.png").toExternalForm()));
     logo.setFitHeight(150);
@@ -31,7 +30,6 @@ public class SideMenu extends VBox {
 
     VBox buttons = new VBox();
     buttons.setAlignment(Pos.CENTER);
-    //buttons.setFillWidth(true);
     buttons.setSpacing(20);
     Button welcome = sideButton("Welcome");
       welcome.setOnMouseClicked(ev -> {

@@ -18,9 +18,6 @@ public class App extends Application {
         stage.setTitle("Astockagy");
         stage.getIcons().add(new Image(this.getClass().getResource("/images/logo.png").toExternalForm()));
         stage.show();
-        stage.setOnCloseRequest(ev -> {
-            System.out.println(stage.getWidth() + "x" + stage.getHeight());
-        });
     }
 
     public static void main(String[] args) {

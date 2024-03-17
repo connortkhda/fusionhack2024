@@ -36,8 +36,6 @@ public class AstrologyScreen extends StackPane {
   boolean eventsShown = false;
 
   public AstrologyScreen(Controller controller) {
-    //System.out.println(daysBetween(START_DATE, END_DATE));
-
     VBox display = new VBox();
 
     HBox inputs = new HBox();
@@ -89,7 +87,6 @@ public class AstrologyScreen extends StackPane {
     Button showEventsButton = new Button("Show/Hide Events");
 
     data.getChildren().addAll(information, eventDate, holdPeriodLabel, holdPeriod, priceAtStart, priceAtEnd, increaseAtEnd, priceAtEvent, priceEODEvent, increaseEODEvent, priceAfterHolding, increaseAfterHolding, showEventsButton);
-    //data.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
 
     display.getChildren().add(chartAndData);
     StackPane chartOverlay = new StackPane();
@@ -113,26 +110,13 @@ public class AstrologyScreen extends StackPane {
       getChildren().remove(loading);
       chartOverlay.getChildren().clear();
       chartAndData.getChildren().clear();
-      //Line line = new Line(0, 0, 0, 400);
-      //line.setStrokeWidth(1);
-      //line.setTranslateX(-240); //PERFECT FOR EDGE
-      //line.setTranslateX(-220); //Perfect start of data
-      //line.setTranslateX(235); //RHS DATA
-      //Line line = eventLine(Controller.parseDate("2020-01-01"));
-      //Line line2 = eventLine(Controller.parseDate("2022-01-01"));
-      //System.out.println(Controller.parseDate("2020-01-01").toString());
+
       ImageView chart = new ImageView(new Image(this.getClass().getResource("/images/"+ ticker.getText() + ".png").toExternalForm())); 
       chartOverlay.getChildren().addAll(chart);
 
-      // for (Map.Entry<String, Float> entry : controller.getStockData().entrySet()) { 
-      //   System.out.println(entry.getKey() + " : "+ entry.getValue()); 
-      // }
 
-      //Map<String, Float> stockData = controller.getStockData();
-      //System.out.println(stockData.get("2022-08-02"));
       this.stockData = controller.getStockDataDates(ticker.getText());
-      //System.out.println(END_DATE.toString());
-      //System.out.println(START_DATE.toString());
+
       chartAndData.getChildren().add(chartOverlay); 
       chartAndData.getChildren().add(data);
 
@@ -198,8 +182,6 @@ public class AstrologyScreen extends StackPane {
 
         DecimalFormat twoDP = new DecimalFormat("#.##");
 
-        //Date dayBeforeDate = Controller.parseDate(dayBefore.get(Calendar.YEAR) + "-" + dayBefore.get(Calendar.MONTH) + "-" + dayBefore.get(Calendar.DAY_OF_MONTH));
-        //Date dateOfEvent = Controller.parseDate(eventDate.getValue());
         Date dayBeforeDate = Controller.getClosestMarketDayPrior(dayBefore.get(Calendar.YEAR) + "-" + dayBefore.get(Calendar.MONTH) + "-" + dayBefore.get(Calendar.DAY_OF_MONTH), stockData);
         Date dateOfEvent = Controller.getClosestMarketDayPrior(eventDate.getValue(), stockData);
 
@@ -220,7 +202,6 @@ public class AstrologyScreen extends StackPane {
         dateAfterHolding.set(Calendar.MONTH, Integer.parseInt(yearMonthDay[1]));
         dateAfterHolding.set(Calendar.DAY_OF_MONTH, Integer.parseInt(yearMonthDay[2]));
         dateAfterHolding.add(Calendar.DAY_OF_MONTH, Integer.parseInt(holdPeriod.getText()));
-        //Date dateHolding = Controller.parseDate(dateAfterHolding.get(Calendar.YEAR) + "-" + dateAfterHolding.get(Calendar.MONTH) + "-" + dateAfterHolding.get(Calendar.DAY_OF_MONTH));
         Date dateHolding = Controller.getClosestMarketDayPrior((dateAfterHolding.get(Calendar.YEAR) + "-" + dateAfterHolding.get(Calendar.MONTH) + "-" + dateAfterHolding.get(Calendar.DAY_OF_MONTH)), stockData);
 
         
@@ -304,8 +285,6 @@ public class AstrologyScreen extends StackPane {
     int daysFromStart = daysBetween(START_DATE, date);
 
     float fraction = (float)daysFromStart/(float)totalDays;
-
-    //System.out.println("total: " + totalDays + " days from start: " + daysFromStart + " fraction: " + fraction + " moving by: " + -220+fraction*440);
 
     Line line = new Line(0, 0, 0, 350);
     line.setStrokeWidth(1);
