@@ -21,12 +21,16 @@ import javafx.scene.paint.Color;
 import program.controller.Controller;
 import java.nio.file.*;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 public class AstrologyScreen extends StackPane {
   final Date START_DATE = Controller.parseDate("2019-03-22");
   final Date END_DATE = Controller.getLatest();
+  Map<Date, Float> stockData;
 
   public AstrologyScreen(Controller controller) {
     VBox display = new VBox();
@@ -36,6 +40,7 @@ public class AstrologyScreen extends StackPane {
     ticker.setPromptText("Input stock ticker");
     ComboBox<String> event = new ComboBox<>();
     event.setPromptText("Select celestial event");
+    event.getItems().add("Mercury in retrograde");
     Button submit = new Button("Submit");
 
     inputs.getChildren().addAll(ticker,event,submit);
@@ -50,16 +55,20 @@ public class AstrologyScreen extends StackPane {
     data.setSpacing(10);
     Label information = new Label("Information");
     ComboBox<String> eventDate = new ComboBox<>();
+    eventDate.setPromptText("Select Event Date");
     TextField holdPeriod = new TextField();
     holdPeriod.setPromptText("Holding period");
+    holdPeriod.setText("0");
     Label priceAtStart = new Label("Price at start of range: ");
     Label priceAtEnd = new Label("Price at end of range: ");
     Label increaseAtEnd = new Label("$.. ..%");
     Label priceAtEvent = new Label("Price at event: ");
+    Label priceEODEvent = new Label("Price at EOD of event: ");
+    Label increaseEODEvent = new Label("$.. ..%");
     Label priceAfterHolding = new Label("Price after holding: ");
     Label increaseAfterHolding = new Label("$.. ..%");
 
-    data.getChildren().addAll(information, eventDate, holdPeriod, priceAtStart, priceAtEnd, increaseAtEnd, priceAtEvent, priceAfterHolding, increaseAfterHolding);
+    data.getChildren().addAll(information, eventDate, holdPeriod, priceAtStart, priceAtEnd, increaseAtEnd, priceAtEvent, priceEODEvent, increaseEODEvent, priceAfterHolding, increaseAfterHolding);
     data.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
 
     display.getChildren().add(chartAndData);
@@ -85,14 +94,14 @@ public class AstrologyScreen extends StackPane {
 
       //Map<String, Float> stockData = controller.getStockData();
       //System.out.println(stockData.get("2022-08-02"));
-      Map<Date, Float> stockData = controller.getStockDataDates(ticker.getText());
+      this.stockData = controller.getStockDataDates(ticker.getText());
       System.out.println(END_DATE.toString());
       System.out.println(START_DATE.toString());
       chartAndData.getChildren().add(chart); 
       chartAndData.getChildren().add(data);
 
-      priceAtStart.setText(priceAtStart.getText() + stockData.get(START_DATE));
-      priceAtEnd.setText(priceAtEnd.getText() + stockData.get(END_DATE));
+      priceAtStart.setText("Price at start of range: " + stockData.get(START_DATE));
+      priceAtEnd.setText("Price at end of range: " + stockData.get(END_DATE));
 
       DecimalFormat twoDP = new DecimalFormat("#.##");
       increaseAtEnd.setText("$" + (stockData.get(END_DATE) - stockData.get(START_DATE)) + " " + Double.valueOf(twoDP.format((stockData.get(END_DATE) - stockData.get(START_DATE))/stockData.get(START_DATE)*100)) + "%");
@@ -110,6 +119,46 @@ public class AstrologyScreen extends StackPane {
     Thread thread = new Thread(executeAppTask);
     thread.start();
     });
+
+    event.setOnAction(ev -> {
+      if (event.getValue() != null) {
+        eventDate.getItems().clear();
+        eventDate.getItems().addAll(Controller.getMercuryRetrogradeStrings());
+      }
+    });
+
+    eventDate.setOnAction(ev -> {
+      if (eventDate.getValue() != null) {
+        String[] yearMonthDay = eventDate.getValue().split("-");
+        Calendar dayBefore = Calendar.getInstance();
+        dayBefore.set(Calendar.YEAR, Integer.parseInt(yearMonthDay[0]));
+        dayBefore.set(Calendar.MONTH, Integer.parseInt(yearMonthDay[1]));
+        dayBefore.set(Calendar.DAY_OF_MONTH, Integer.parseInt(yearMonthDay[2]));
+        dayBefore.add(Calendar.DAY_OF_MONTH, -1);
+
+        DecimalFormat twoDP = new DecimalFormat("#.##");
+
+        Date dayBeforeDate = Controller.parseDate(dayBefore.get(Calendar.YEAR) + "-" + dayBefore.get(Calendar.MONTH) + "-" + dayBefore.get(Calendar.DAY_OF_MONTH));
+        Date dateOfEvent = Controller.parseDate(eventDate.getValue());
+        priceAtEvent.setText("Price at event: " + stockData.get(dayBeforeDate));
+        priceEODEvent.setText("Price at EOD of event: " + stockData.get(dateOfEvent));
+        increaseEODEvent.setText("$" + Double.valueOf(twoDP.format(stockData.get(dateOfEvent) - stockData.get(dayBeforeDate)) )+ " " + Double.valueOf(twoDP.format((stockData.get(dateOfEvent) - stockData.get(dayBeforeDate))/stockData.get(dayBeforeDate)*100)) + "%");
+
+        Calendar dateAfterHolding = Calendar.getInstance();
+        dateAfterHolding.set(Calendar.YEAR, Integer.parseInt(yearMonthDay[0]));
+        dateAfterHolding.set(Calendar.MONTH, Integer.parseInt(yearMonthDay[1]));
+        dateAfterHolding.set(Calendar.DAY_OF_MONTH, Integer.parseInt(yearMonthDay[2]));
+        dateAfterHolding.add(Calendar.DAY_OF_MONTH, Integer.parseInt(holdPeriod.getText()));
+        Date dateHolding = Controller.parseDate(dateAfterHolding.get(Calendar.YEAR) + "-" + dateAfterHolding.get(Calendar.MONTH) + "-" + dateAfterHolding.get(Calendar.DAY_OF_MONTH));
+
+        priceAfterHolding.setText("Price after holding: " + (stockData.get(dateHolding)));
+        increaseAfterHolding.setText("$" + Double.valueOf(twoDP.format((stockData.get(dateHolding) - stockData.get(dayBeforeDate)))) + " " + Double.valueOf(twoDP.format((stockData.get(dateHolding) - stockData.get(dayBeforeDate))/stockData.get(dayBeforeDate)*100)) + "%");
+        
+        System.out.println(Controller.getClosestMarketDayPrior("2019-10-27", stockData));
+      }
+    });
+
+
   }
 
   private void displayGraph() {

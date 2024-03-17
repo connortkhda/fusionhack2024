@@ -105,9 +105,33 @@ public class Controller {
   }
 
   public static Date[] getMercuryRetrogradeDates() {
-    Date[] dates = {parseDate("2015-03-05"),parseDate("2015-07-07"),parseDate("2015-10-31"),parseDate("2020-02-16"),parseDate("2020-06-17"),
+    Date[] dates = {parseDate("2019-03-05"),parseDate("2019-07-07"),parseDate("2019-10-31"),parseDate("2020-02-16"),parseDate("2020-06-17"),
     parseDate("2020-10-13"),parseDate("2021-01-30"),parseDate("2021-05-29"),parseDate("2021-09-27"),parseDate("2022-01-14"),parseDate("2022-05-10"),
     parseDate("2022-09-09"),parseDate("2022-12-29"),parseDate("2023-04-21"),parseDate("2023-08-23"),parseDate("2023-12-13")};
     return dates;
+  }
+
+  public static String[] getMercuryRetrogradeStrings() {
+    String[] dates = {"2019-03-05","2019-07-07","2019-10-31","2020-02-16","2020-06-17","2020-10-13","2021-01-30","2021-05-29","2021-09-27","2022-01-14","2022-05-10","2022-09-09","2022-12-29","2023-04-21","2023-08-23","2023-12-13"};
+    return dates;
+  }
+
+  public static Date getClosestMarketDayPrior(String date, Map<Date, Float> stockData) {
+    String[] yearMonthDay = date.split("-");
+    Calendar day = Calendar.getInstance();
+    day.set(Calendar.YEAR, Integer.parseInt(yearMonthDay[0]));
+    day.set(Calendar.MONTH, Integer.parseInt(yearMonthDay[1]));
+    day.set(Calendar.DAY_OF_MONTH, Integer.parseInt(yearMonthDay[2]));
+
+    Date dateToCheck = Controller.parseDate(day.get(Calendar.YEAR) + "-" + day.get(Calendar.MONTH) + "-" + day.get(Calendar.DAY_OF_MONTH));
+    for (int i = 1; i < 4; i++) {
+      dateToCheck = Controller.parseDate(day.get(Calendar.YEAR) + "-" + day.get(Calendar.MONTH) + "-" + day.get(Calendar.DAY_OF_MONTH));
+      System.out.println("Loop " + i + " " + dateToCheck);
+      if (stockData.keySet().contains(day.getTime())) {
+        return dateToCheck;
+      }
+      day.add(Calendar.DAY_OF_MONTH, -1);
+    }
+    return dateToCheck;
   }
 }
