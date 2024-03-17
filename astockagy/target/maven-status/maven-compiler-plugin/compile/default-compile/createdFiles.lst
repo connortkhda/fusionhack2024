@@ -1,0 +1,9 @@
+program\ui\AstrologyScreen.class
+program\ui\SideMenu.class
+program\App.class
+program\controller\Controller.class
+program\scene\MainScene.class
+program\ui\WeatherScreen.class
+program\Launcher.class
+program\ui\WelcomeScreen.class
+program\ui\AstrologyScreen$1.class
