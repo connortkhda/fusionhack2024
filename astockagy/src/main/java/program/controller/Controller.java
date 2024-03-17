@@ -124,10 +124,10 @@ public class Controller {
     day.set(Calendar.DAY_OF_MONTH, Integer.parseInt(yearMonthDay[2]));
 
     Date dateToCheck = Controller.parseDate(day.get(Calendar.YEAR) + "-" + day.get(Calendar.MONTH) + "-" + day.get(Calendar.DAY_OF_MONTH));
-    for (int i = 1; i < 4; i++) {
+    for (int i = 1; i < 6; i++) {
       dateToCheck = Controller.parseDate(day.get(Calendar.YEAR) + "-" + day.get(Calendar.MONTH) + "-" + day.get(Calendar.DAY_OF_MONTH));
       System.out.println("Loop " + i + " " + dateToCheck);
-      if (stockData.keySet().contains(day.getTime())) {
+      if (stockData.keySet().contains(dateToCheck)) {
         return dateToCheck;
       }
       day.add(Calendar.DAY_OF_MONTH, -1);

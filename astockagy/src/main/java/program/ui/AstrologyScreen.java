@@ -134,12 +134,16 @@ public class AstrologyScreen extends StackPane {
         dayBefore.set(Calendar.YEAR, Integer.parseInt(yearMonthDay[0]));
         dayBefore.set(Calendar.MONTH, Integer.parseInt(yearMonthDay[1]));
         dayBefore.set(Calendar.DAY_OF_MONTH, Integer.parseInt(yearMonthDay[2]));
-        dayBefore.add(Calendar.DAY_OF_MONTH, -1);
+        dayBefore.add(Calendar.DAY_OF_MONTH, -1); //TODO: If two things are trying to find the same call here (eg day of and day before), they get the same thing
 
         DecimalFormat twoDP = new DecimalFormat("#.##");
 
-        Date dayBeforeDate = Controller.parseDate(dayBefore.get(Calendar.YEAR) + "-" + dayBefore.get(Calendar.MONTH) + "-" + dayBefore.get(Calendar.DAY_OF_MONTH));
-        Date dateOfEvent = Controller.parseDate(eventDate.getValue());
+        //Date dayBeforeDate = Controller.parseDate(dayBefore.get(Calendar.YEAR) + "-" + dayBefore.get(Calendar.MONTH) + "-" + dayBefore.get(Calendar.DAY_OF_MONTH));
+        //Date dateOfEvent = Controller.parseDate(eventDate.getValue());
+        Date dayBeforeDate = Controller.getClosestMarketDayPrior(dayBefore.get(Calendar.YEAR) + "-" + dayBefore.get(Calendar.MONTH) + "-" + dayBefore.get(Calendar.DAY_OF_MONTH), stockData);
+        Date dateOfEvent = Controller.getClosestMarketDayPrior(eventDate.getValue(), stockData);
+
+
         priceAtEvent.setText("Price at event: " + stockData.get(dayBeforeDate));
         priceEODEvent.setText("Price at EOD of event: " + stockData.get(dateOfEvent));
         increaseEODEvent.setText("$" + Double.valueOf(twoDP.format(stockData.get(dateOfEvent) - stockData.get(dayBeforeDate)) )+ " " + Double.valueOf(twoDP.format((stockData.get(dateOfEvent) - stockData.get(dayBeforeDate))/stockData.get(dayBeforeDate)*100)) + "%");
@@ -149,12 +153,13 @@ public class AstrologyScreen extends StackPane {
         dateAfterHolding.set(Calendar.MONTH, Integer.parseInt(yearMonthDay[1]));
         dateAfterHolding.set(Calendar.DAY_OF_MONTH, Integer.parseInt(yearMonthDay[2]));
         dateAfterHolding.add(Calendar.DAY_OF_MONTH, Integer.parseInt(holdPeriod.getText()));
-        Date dateHolding = Controller.parseDate(dateAfterHolding.get(Calendar.YEAR) + "-" + dateAfterHolding.get(Calendar.MONTH) + "-" + dateAfterHolding.get(Calendar.DAY_OF_MONTH));
+        //Date dateHolding = Controller.parseDate(dateAfterHolding.get(Calendar.YEAR) + "-" + dateAfterHolding.get(Calendar.MONTH) + "-" + dateAfterHolding.get(Calendar.DAY_OF_MONTH));
+        Date dateHolding = Controller.getClosestMarketDayPrior((dateAfterHolding.get(Calendar.YEAR) + "-" + dateAfterHolding.get(Calendar.MONTH) + "-" + dateAfterHolding.get(Calendar.DAY_OF_MONTH)), stockData);
 
         priceAfterHolding.setText("Price after holding: " + (stockData.get(dateHolding)));
         increaseAfterHolding.setText("$" + Double.valueOf(twoDP.format((stockData.get(dateHolding) - stockData.get(dayBeforeDate)))) + " " + Double.valueOf(twoDP.format((stockData.get(dateHolding) - stockData.get(dayBeforeDate))/stockData.get(dayBeforeDate)*100)) + "%");
         
-        System.out.println(Controller.getClosestMarketDayPrior("2019-10-27", stockData));
+        System.out.println(Controller.getClosestMarketDayPrior("2019-10-25", stockData));
       }
     });
 

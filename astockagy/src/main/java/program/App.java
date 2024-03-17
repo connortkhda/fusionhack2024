@@ -13,7 +13,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        Scene scene = new Scene(new MainScene(), 975, 800);
+        Scene scene = new Scene(new MainScene(), 1050, 575);
         stage.setScene(scene);
         stage.setTitle("Astockagy");
         stage.getIcons().add(new Image(this.getClass().getResource("/images/logo.png").toExternalForm()));
