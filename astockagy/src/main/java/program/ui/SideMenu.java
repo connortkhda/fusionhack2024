@@ -43,22 +43,14 @@ public class SideMenu extends VBox {
       controller.showAstrologyScreen();
     });
 
-    Button swift = sideButton("Swift");
-      swift.setOnMouseClicked(ev -> {
-      controller.showSwiftScreen();
-    });
-
     Button weather = sideButton("Weather");
       weather.setOnMouseClicked(ev -> {
       controller.showWeatherScreen();
     });
 
-    Button pigeon = sideButton("Pigeon"); // Joke one, was there a pigeon being loud outside my window
-      pigeon.setOnMouseClicked(ev -> {
-      controller.showPigeonScreen();
-    });
+    weather.setDisable(true);
     
-    buttons.getChildren().addAll(welcome, astrology, swift, weather, pigeon);
+    buttons.getChildren().addAll(welcome, astrology, weather);
     getChildren().addAll(logo, buttons);
   }
 

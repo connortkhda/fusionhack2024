@@ -29,16 +29,8 @@ public class Controller {
     mainScene.showAstrologyScreen();
   }
 
-  public void showSwiftScreen() {
-    mainScene.showSwiftScreen();
-  }
-
   public void showWeatherScreen() {
     mainScene.showWeatherScreen();
-  }
-
-  public void showPigeonScreen() {
-    mainScene.showPigeonScreen();
   }
 
   public void createStockGraph(String ticker) {

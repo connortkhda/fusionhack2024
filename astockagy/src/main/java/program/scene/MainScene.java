@@ -5,9 +5,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import program.controller.Controller;
 import program.ui.AstrologyScreen;
-import program.ui.PigeonScreen;
 import program.ui.SideMenu;
-import program.ui.SwiftScreen;
 import program.ui.WeatherScreen;
 import program.ui.WelcomeScreen;
 
@@ -51,14 +49,6 @@ public class MainScene extends StackPane {
     mainDisplay.getChildren().add(astrologyScreen);
   }
 
-  public void showSwiftScreen() {
-    mainDisplay.getChildren().remove(1);
-
-    SwiftScreen swiftScreen = new SwiftScreen(controller);
-    HBox.setHgrow(swiftScreen, Priority.ALWAYS);
-
-    mainDisplay.getChildren().add(swiftScreen);
-  }
 
   public void showWeatherScreen() {
     mainDisplay.getChildren().remove(1);
@@ -69,15 +59,4 @@ public class MainScene extends StackPane {
     mainDisplay.getChildren().add(weatherScreen);
   }
 
-  public void showPigeonScreen() {
-    mainDisplay.getChildren().remove(1);
-
-    PigeonScreen pigeonScreen = new PigeonScreen(controller);
-    HBox.setHgrow(pigeonScreen, Priority.ALWAYS);
-
-    mainDisplay.getChildren().add(pigeonScreen);
-  }
-
-
-  
 }
