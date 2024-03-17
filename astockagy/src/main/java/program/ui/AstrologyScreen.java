@@ -21,10 +21,8 @@ import javafx.scene.paint.Color;
 import program.controller.Controller;
 import java.nio.file.*;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 public class AstrologyScreen extends StackPane {
@@ -95,8 +93,8 @@ public class AstrologyScreen extends StackPane {
       //Map<String, Float> stockData = controller.getStockData();
       //System.out.println(stockData.get("2022-08-02"));
       this.stockData = controller.getStockDataDates(ticker.getText());
-      System.out.println(END_DATE.toString());
-      System.out.println(START_DATE.toString());
+      //System.out.println(END_DATE.toString());
+      //System.out.println(START_DATE.toString());
       chartAndData.getChildren().add(chart); 
       chartAndData.getChildren().add(data);
 
@@ -158,8 +156,6 @@ public class AstrologyScreen extends StackPane {
 
         priceAfterHolding.setText("Price after holding: " + (stockData.get(dateHolding)));
         increaseAfterHolding.setText("$" + Double.valueOf(twoDP.format((stockData.get(dateHolding) - stockData.get(dayBeforeDate)))) + " " + Double.valueOf(twoDP.format((stockData.get(dateHolding) - stockData.get(dayBeforeDate))/stockData.get(dayBeforeDate)*100)) + "%");
-        
-        System.out.println(Controller.getClosestMarketDayPrior("2019-10-25", stockData));
       }
     });
 

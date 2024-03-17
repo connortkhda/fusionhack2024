@@ -126,7 +126,7 @@ public class Controller {
     Date dateToCheck = Controller.parseDate(day.get(Calendar.YEAR) + "-" + day.get(Calendar.MONTH) + "-" + day.get(Calendar.DAY_OF_MONTH));
     for (int i = 1; i < 6; i++) {
       dateToCheck = Controller.parseDate(day.get(Calendar.YEAR) + "-" + day.get(Calendar.MONTH) + "-" + day.get(Calendar.DAY_OF_MONTH));
-      System.out.println("Loop " + i + " " + dateToCheck);
+      //System.out.println("Loop " + i + " " + dateToCheck);
       if (stockData.keySet().contains(dateToCheck)) {
         return dateToCheck;
       }
