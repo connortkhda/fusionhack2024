@@ -41,21 +41,21 @@ public class Controller {
     mainScene.showPigeonScreen();
   }
 
-  public void createStockGraph() {
+  public void createStockGraph(String ticker) {
     try {
       @SuppressWarnings({"deprecation", "unused"})
-      Process runtime = Runtime.getRuntime().exec("python src\\main\\java\\program\\model\\stockData.py AMD");
+      Process runtime = Runtime.getRuntime().exec("python src\\main\\java\\program\\model\\stockData.py " + ticker);
     } catch (IOException e) {
-      System.out.println("Something went wrong with the stock grpah");
+      System.out.println("Something went wrong with the stock graph");
     }
   }
 
   //https://www.geeksforgeeks.org/reading-text-file-into-java-hashmap/
-  public Map<String, Float> getStockData() {
+  public Map<String, Float> getStockData(String ticker) {
     Map<String, Float> map = new HashMap<String, Float>(); 
     BufferedReader br = null; 
     try { 
-      File file = new File("src/main/resources/data/AMDData.csv"); 
+      File file = new File("src/main/resources/data/" + ticker + "Data.csv"); 
       br = new BufferedReader(new FileReader(file)); 
       String line = br.readLine(); //Gets rid of first line
       while ((line = br.readLine()) != null) { 
@@ -78,9 +78,9 @@ public class Controller {
     return map;  
   }
 
-  public Map<Date, Float> getStockDataDates() {
+  public Map<Date, Float> getStockDataDates(String ticker) {
     Map<Date, Float> map = new HashMap<Date, Float>();
-    for (Map.Entry<String, Float> entry : getStockData().entrySet()) { 
+    for (Map.Entry<String, Float> entry : getStockData(ticker).entrySet()) { 
       map.put(parseDate(entry.getKey()), entry.getValue());
       //System.out.println(entry.getKey() + " : "+ entry.getValue()); 
     }

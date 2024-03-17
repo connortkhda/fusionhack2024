@@ -20,14 +20,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import program.controller.Controller;
 import java.nio.file.*;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Calendar;
-import java.util.Calendar;
+import java.text.DecimalFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 public class AstrologyScreen extends StackPane {
@@ -35,8 +29,6 @@ public class AstrologyScreen extends StackPane {
   final Date END_DATE = Controller.getLatest();
 
   public AstrologyScreen(Controller controller) {
-    controller.createStockGraph();
-
     VBox display = new VBox();
 
     HBox inputs = new HBox();
@@ -45,6 +37,7 @@ public class AstrologyScreen extends StackPane {
     ComboBox<String> event = new ComboBox<>();
     event.setPromptText("Select celestial event");
     Button submit = new Button("Submit");
+
     inputs.getChildren().addAll(ticker,event,submit);
 
     display.getChildren().add(inputs);
@@ -73,6 +66,8 @@ public class AstrologyScreen extends StackPane {
 
     // TODO: Implement screen switching listener and cancel event if triggered
     //https://stackoverflow.com/questions/44398611/running-a-process-in-a-separate-thread-so-rest-of-java-fx-application-is-usable
+    submit.setOnMouseClicked(ev -> { 
+      controller.createStockGraph(ticker.getText()); 
     Task<Void> executeAppTask = new Task<Void>() {
       @Override
       protected Void call() throws Exception {
@@ -81,8 +76,8 @@ public class AstrologyScreen extends StackPane {
       }
     };
 
-    executeAppTask.setOnSucceeded(e -> {
-      ImageView chart = new ImageView(new Image(this.getClass().getResource("/images/AMD.png").toExternalForm())); // TODO: Change from fixed value
+    executeAppTask.setOnSucceeded(e -> { //TODO: THIS PROBABLY ALL NEEDS TO BE IN A TRY CATCH BLOCK
+      ImageView chart = new ImageView(new Image(this.getClass().getResource("/images/"+ ticker.getText() + ".png").toExternalForm())); 
 
       // for (Map.Entry<String, Float> entry : controller.getStockData().entrySet()) { 
       //   System.out.println(entry.getKey() + " : "+ entry.getValue()); 
@@ -90,7 +85,7 @@ public class AstrologyScreen extends StackPane {
 
       //Map<String, Float> stockData = controller.getStockData();
       //System.out.println(stockData.get("2022-08-02"));
-      Map<Date, Float> stockData = controller.getStockDataDates();
+      Map<Date, Float> stockData = controller.getStockDataDates(ticker.getText());
       System.out.println(END_DATE.toString());
       System.out.println(START_DATE.toString());
       chartAndData.getChildren().add(chart); 
@@ -98,6 +93,10 @@ public class AstrologyScreen extends StackPane {
 
       priceAtStart.setText(priceAtStart.getText() + stockData.get(START_DATE));
       priceAtEnd.setText(priceAtEnd.getText() + stockData.get(END_DATE));
+
+      DecimalFormat twoDP = new DecimalFormat("#.##");
+      increaseAtEnd.setText("$" + (stockData.get(END_DATE) - stockData.get(START_DATE)) + " " + Double.valueOf(twoDP.format((stockData.get(END_DATE) - stockData.get(START_DATE))/stockData.get(START_DATE)*100)) + "%");
+
     });
 
     executeAppTask.setOnFailed(e -> {
@@ -110,6 +109,7 @@ public class AstrologyScreen extends StackPane {
 
     Thread thread = new Thread(executeAppTask);
     thread.start();
+    });
   }
 
   private void displayGraph() {
